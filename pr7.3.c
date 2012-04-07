@@ -122,8 +122,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    install_signal_handler(SIGINT, SIGINT_handler, 0);
-    //block_signal(SIGINT);
+    install_signal_handler(SIGINT, SIGINT_handler);
 
     if(s_flag > 0)
     {
@@ -134,21 +133,32 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
     }
-
-    // STARTFILE LOOP:
-    if(s_flag > 0)
+    else // open the default init file, if it exists
     {
-        while(fgets(cmdline, MAXLINE, f_p) != NULL)
+        f_p = fopen("pr7.init", "r");
+        if(f_p == NULL)
         {
-            /* issue prompt and read command line */
-            if (feof(stdin))     /* end of file */
-                { break; }
-
-            if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
-                fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
+            fprintf(stderr, "%s: Cannot open file %s: %s\n", prog, filename, strerror(errno));
+            exit(EXIT_FAILURE);
         }
     }
 
+    // STARTFILE LOOP:
+    while(fgets(cmdline, MAXLINE, f_p) != NULL)
+    {
+        /* issue prompt and read command line */
+        if (feof(stdin))     /* end of file */
+            { break; }
+
+        if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
+            fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
+    }
+
+    fclose(f_p);
+
+    // Now read from either a file or stdin
+
+    // If a file is given, open it here
     if(argv[optind] != NULL)
     {
         // there is a filename given, so read from that only.
@@ -161,6 +171,7 @@ int main(int argc, char *argv[])
         filename = argv[optind]; // ATTN: watch for leaks! might need to strdup.
     }
 
+    // Else, no file was given, so just read from stdin.
     else
     {
         f_p = stdin;

@@ -15,7 +15,7 @@
 typedef void sighandler_t(int);
     /* the type of a function that has one int argument, and returns nothing */
 
-int install_signal_handler(int sig, sighandler_t func, _Bool ignore);
+int install_signal_handler(int sig, sighandler_t func);
     /* returns 0 if successful, -1 if not */
 
 int block_signal(int sig, _Bool block);

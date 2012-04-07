@@ -32,7 +32,7 @@
 /*----------------------------------------------------------------------------*/
 
 /* return 0 if successful, -1 if not */
-int install_signal_handler(int sig, sighandler_t func, _Bool ignore)
+int install_signal_handler(int sig, sighandler_t func)
 {
   int error;
 
@@ -40,10 +40,7 @@ int install_signal_handler(int sig, sighandler_t func, _Bool ignore)
   struct sigaction sigact;		/* signal handler descriptor */
   int ret;				/* error indicator */
  
-  if(!ignore)
-      sigact.sa_handler = func;		/* name of the signal handler function */
-  else
-      sigact.sa_handler = SIG_IGN;
+  sigact.sa_handler = func;		/* name of the signal handler function */
   sigemptyset(&sigact.sa_mask);		/* do not mask any interrupts while in handler */
   sigact.sa_flags = SA_RESTART;		/* restart system functions if interrupted */
 					/* later experiment - replace SA_RESTART with 0 */

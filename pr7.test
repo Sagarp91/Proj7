@@ -1,0 +1,8 @@
+echo greetings from pr7.test
+whoami
+date
+pwd
+echo foo bar
+cat testfile
+exit
+echo foo
