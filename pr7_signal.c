@@ -1,8 +1,7 @@
-/* CMPSC 311 Project 6 toolkit 
+/*
+ * pr7_table.c - process table implementation
+ * Erich Stoekl, CMPSC 311, SP 12
  *
- * This file is provided as part of the project description and starter kit.
- * If you modify it, then put your name, email address, and the date, in this
- * comment, and include this file in the materials you turn in.
  */
 
 /*----------------------------------------------------------------------------*/
@@ -77,6 +76,7 @@ int block_signal(int sig, _Bool block)
     return ret;
 }
 
+#ifdef UNDEF
 void reinstall_signal_handler(int sig, sighandler_t func)
 {
 #ifdef PR7_USE_SIGACTION
@@ -87,6 +87,6 @@ void reinstall_signal_handler(int sig, sighandler_t func)
   signal(sig, func);
 #endif
 }
-
+#endif
 /*----------------------------------------------------------------------------*/
 

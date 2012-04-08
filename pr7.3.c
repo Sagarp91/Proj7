@@ -28,8 +28,9 @@
 #include "cmpsc311.h"
 #include "pr7_signal.h"
 #include "builtin.h"
+#include "pr7_table.h"
                                  /* evaluate a command line */
-int eval_line(char *cmdline, int e_flags);
+int eval_line(char *cmdline, table_t *process_table, int e_flags);
                                  /* build the _argv array */
 int parse(char *buf, char *_argv[]);
 int builtin(char *_argv[]);      /* if builtin command, run it */
@@ -84,6 +85,9 @@ int main(int argc, char *argv[])
 
     extern char *prompt;
 
+    extern int pr7_debug;
+    pr7_debug = 0;
+
     // Getopt section:
     extern int optind;
     extern char *optarg;
@@ -104,6 +108,7 @@ int main(int argc, char *argv[])
                 break;
             case 'v':
                 v_flag++;
+                pr7_debug++;
                 break;
             case 'i':
                 i_flag++;
@@ -122,7 +127,12 @@ int main(int argc, char *argv[])
         }
     }
 
+    // start the signal handler:
     install_signal_handler(SIGINT, SIGINT_handler);
+
+    // create the process table:
+    table_t *process_table = allocate_table();
+    print_process_table(process_table, __func__);
 
     if(s_flag > 0)
     {
@@ -150,7 +160,7 @@ int main(int argc, char *argv[])
         if (feof(stdin))     /* end of file */
             { break; }
 
-        if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
+        if((ret = eval_line(cmdline, process_table, e_flag)) == EXIT_FAILURE)
             fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
     }
 
@@ -189,7 +199,7 @@ int main(int argc, char *argv[])
         if (feof(stdin))         /* end of file */
             { break; }
 
-        if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
+        if((ret = eval_line(cmdline, process_table, e_flag)) == EXIT_FAILURE)
             fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
 
         if(f_p == stdin && i_flag > 0)
@@ -209,7 +219,7 @@ int main(int argc, char *argv[])
  * Compare to eval() in CS:APP Fig. 8.23.
  */
 
-int eval_line(char *cmdline, int e_flag)
+int eval_line(char *cmdline, table_t *process_table, int e_flag)
 {
     char *_argv[MAXARGS];        /* _argv for execve(), denoted by underscore to distinguish from main argv array*/
     char buf[MAXLINE];           /* holds modified command line */
@@ -245,9 +255,19 @@ int eval_line(char *cmdline, int e_flag)
         }
     }
 
-    if (background)              /* parent waits for foreground job to terminate */
+    if (background && pid != 0)              /* parent waits for foreground job to terminate */
     {
         printf("background process %d: %s", (int) pid, cmdline);
+
+        // Add to process table:
+        int ret;
+        if( (ret = insert_process_table(process_table, pid)) == -1)
+        {
+            fprintf(stderr, "insert_process_table failed: line %d: %s\n", __LINE__, strerror(errno));
+        }
+        printf("seg?\n");
+
+        // Passing 0 unblocks the signal.
         block_signal(SIGINT, 0);
     }
     else
