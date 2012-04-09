@@ -107,14 +107,14 @@ int main(int argc, char *argv[])
     extern int optind;
     extern char *optarg;
 
-    int v_flag = 0;
     int i_flag = 0;
     int e_flag = 0;
     int s_flag = 0;
+    int verbose = 0;
     int ch;
 
     optind = 1;
-    while((ch = (getopt(argc, argv, ":hvies:"))) != -1)
+    while((ch = (getopt(argc, argv, ":hvdies:"))) != -1)
     {
         switch(ch)
         {
@@ -122,7 +122,9 @@ int main(int argc, char *argv[])
                 usage(ret);
                 break;
             case 'v':
-                v_flag++;
+                verbose++;
+                break;
+            case 'd':
                 pr7_debug++;
                 break;
             case 'i':
@@ -276,8 +278,8 @@ int eval_line(char *cmdline, int e_flag)
         printf("background process %d: %s", (int) pid, cmdline);
 
 // Add to process table:
-        int ret;
-        if( (ret = insert_process_table(process_table, pid)) == -1)
+        int err;
+        if( (err = insert_process_table(process_table, pid)) == -1)
         {
             fprintf(stderr, "insert_process_table failed: line %d: %s\n", __LINE__, strerror(errno));
         }
@@ -291,6 +293,11 @@ int eval_line(char *cmdline, int e_flag)
         {
             printf("%s: waitpid failed: %s\n", _argv[0], strerror(errno));
             exit(EXIT_FAILURE);
+        }
+        // If in verbose mode, print out a detailed message:
+        if(verbose)
+        {
+            printf("process %d, completed normally, status %d\n", pid, ret);
         }
     }
 

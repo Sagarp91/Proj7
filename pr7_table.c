@@ -68,8 +68,7 @@ void print_process_table(table_t *pt, const char * const caller)
     printf("  in pid %d, process table, called from %s\n", getpid(), caller);
     printf("       pid         state        status\n");
 
-    if (iter == NULL)
-        printf("       No processes running.\n");
+    if (iter == NULL);
     else
     {
         iter = iter->next;
@@ -100,6 +99,8 @@ table_t *allocate_table(void)
 
 void deallocate_table(table_t *pt)
 {
+    // Free the process table.
+    free(pt);
 }
 
 int insert_process_table(table_t *pt, pid_t pid)
@@ -117,11 +118,6 @@ int insert_process_table(table_t *pt, pid_t pid)
             return -1;
         }
 
-        if(pt->p_tab == NULL)
-            printf("it's null!\n");
-        else
-            printf("not null!\n");
-
         pt->p_tab->next = (child_t *)malloc( sizeof(child_t) );
         if(!(pt->p_tab->next))
             return -1;
@@ -138,10 +134,7 @@ int insert_process_table(table_t *pt, pid_t pid)
         pt->children++;
 
         child_t *iter = pt->p_tab;
-        int count = 0;
-        for(; iter->next != NULL; iter = iter->next)
-            count++;
-        printf("count: %d\n", count);
+        for(; iter->next != NULL; iter = iter->next);
         
         //iter = iter->next;
         iter->next = (child_t *)malloc( sizeof(child_t) );
@@ -150,7 +143,6 @@ int insert_process_table(table_t *pt, pid_t pid)
         {
             return -1;
         }
-        printf("not failed yet?\n");
 
         iter->next->pid = pid;
         iter->next->state = STATE_RUNNING;
@@ -198,6 +190,7 @@ int remove_process_table(table_t *pt, pid_t pid)
 
             (pt->children)--;
 
+            if (pr7_debug) print_process_table(pt, __func__);
             return 0;
         }
     }
@@ -205,7 +198,6 @@ int remove_process_table(table_t *pt, pid_t pid)
     printf("remove_process_table: target pid not found.\n");
     return -1;
 
-    if (pr7_debug) print_process_table(pt, __func__);
 }
 
 

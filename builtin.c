@@ -36,6 +36,7 @@ int builtin(char *_argv[], table_t *pt)
         }
         else
         {
+            deallocate_table(pt);
             exit(0);
         }
     }
