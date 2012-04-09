@@ -309,10 +309,19 @@ int eval_line(char *cmdline, int e_flag)
 int parse(char *buf, char *_argv[])
 {
     char *delim;                                  /* points to first whitespace delimiter */
+    char *comment;
     int argc = 0;                                 /* number of args */
     int bg;                                       /* background job? */
 
     char whsp[] = " \t\n\v\f\r";                  /* whitespace characters */
+
+    // Look for comments:
+    comment = strchr(buf, '#');
+    if(comment)
+    {
+        buf[comment-buf] = '\n';
+        buf[comment-buf+1] = '\0';
+    }
 
 /* Note - the trailing '\n' in buf is whitespace, and we need it as a delimiter. */
 
@@ -349,7 +358,6 @@ int cleanup_terminated_children()
     while (1)
     {
         pid = waitpid(-1, &status, WNOHANG);
-        printf("pid is %d, status is %d\n", (int)pid, status);
 
         if (pid == 0)                             /* returns 0 if no child process to wait for */
             { break; }
@@ -371,7 +379,7 @@ int cleanup_terminated_children()
             }
         }
 
-        //print_wait_status(pid, status);           /* supply this yourself */
+        printf("pid is %d, status is %d\n", (int)pid, status);
         update_process_table(process_table, pid, status);
         remove_process_table(process_table, pid);
         count++;
