@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "pr7_table.h"
 
@@ -56,7 +57,7 @@ int pr7_debug;
 
 int number_of_children(table_t *pt)
 {
-    child_t *iter = pt->p_tab;
+    return pt->children;
 }
 
 void print_process_table(table_t *pt, const char * const caller)
@@ -122,6 +123,9 @@ int insert_process_table(table_t *pt, pid_t pid)
             printf("not null!\n");
 
         pt->p_tab->next = (child_t *)malloc( sizeof(child_t) );
+        if(!(pt->p_tab->next))
+            return -1;
+
         pt->p_tab->next->pid = pid;
         pt->p_tab->next->state = STATE_RUNNING;
         pt->p_tab->next->exit_status = 0;
@@ -131,6 +135,8 @@ int insert_process_table(table_t *pt, pid_t pid)
     // end of process table, then add our new data.
     else
     {
+        pt->children++;
+
         child_t *iter = pt->p_tab;
         int count = 0;
         for(; iter->next != NULL; iter = iter->next)
@@ -161,13 +167,43 @@ int insert_process_table(table_t *pt, pid_t pid)
 int update_process_table(table_t *pt, pid_t pid, int status)
 /* exit status from completed process */
 {
+    // Iterate through table to find matching pid
+    child_t *iter = pt->p_tab;
+
+    for(; iter != NULL; iter = iter->next)
+    {
+        if(iter->pid == pid)
+            iter->state = status;
+    }
 
     if (pr7_debug) print_process_table(pt, __func__);
+
+    return 0;
 }
 
 
 int remove_process_table(table_t *pt, pid_t pid)
 {
+    // Find the process with the given pid and free it from memory:
+    child_t *iter = pt->p_tab;
+    
+    for(; iter != NULL; iter = iter->next)
+    {
+        if(iter->next->pid == pid)
+        {
+            // Then we need to kill iter->next
+            child_t *temp = iter->next->next;
+            free(iter->next);
+            iter->next = temp;
+
+            (pt->children)--;
+
+            return 0;
+        }
+    }
+
+    printf("remove_process_table: target pid not found.\n");
+    return -1;
 
     if (pr7_debug) print_process_table(pt, __func__);
 }

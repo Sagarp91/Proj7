@@ -14,6 +14,7 @@
 
 #include "cmpsc311.h"
 #include "builtin.h"
+//#include "pr7_table.h"
 
 /* if first arg is a builtin command, run it and return true
  *
@@ -22,11 +23,22 @@
 
 extern char **environ;
 
-int builtin(char *_argv[])
+int builtin(char *_argv[], table_t *pt)
 {
                                  /* exit command */
     if (strcmp(_argv[0], "exit") == 0)
-        { exit(0); }
+    {
+        int children = number_of_children(pt);
+        if(children > 0)
+        {
+            printf("There are %d background job(s) running.\n", children);
+            return 1;
+        }
+        else
+        {
+            exit(0);
+        }
+    }
 
                                  /* ignore singleton & */
     if (strcmp(_argv[0], "&") == 0)
@@ -149,6 +161,12 @@ int builtin(char *_argv[])
         }
         else
             printf("%s: No argument given for unsenv", prog);
+        return 1;
+    }
+
+    if(strcmp(_argv[0], "pjobs") == 0)
+    {
+        print_process_table(pt, __func__);
         return 1;
     }
 

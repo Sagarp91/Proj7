@@ -323,3 +323,40 @@ int parse(char *buf, char *_argv[])
     return bg;
 }
 
+
+int cleanup_terminated_children(void)
+{
+      pid_t pid;
+        int status;
+          int count = 0;
+
+            while (1)
+                    {
+                              pid = waitpid(-1, &status, WNOHANG);
+
+                                    if (pid == 0)             /* returns 0 if no child process to wait for */
+                                                { break; }
+
+                                                      if (pid == -1)            /* returns -1 if there was an error */
+                                                                  {
+                                                                                /* errno will have been set by waitpid() */
+                                                                                          if (errno == ECHILD)  /* no children */
+                                                                                                          { break; }
+                                                                                                                    if (errno == EINTR)   /* waitpid() was interrupted by a signal */
+                                                                                                                                    { continue; }       /* try again */
+                                                                                                                                              else
+                                                                                                                                                              {
+                                                                                                                                                                                printf("unexpected error in cleanup_terminated_children(): %s\n",
+                                                                                                                                                                                                strerror(errno));
+                                                                                                                                                                                              break;
+                                                                                                                                                                                                          }
+                                                                                                                                                                                                                  }
+
+                                                                                                                                                                                                                        print_wait_status(pid, status);      /* supply this yourself */
+                                                                                                                                                                                                                              update_process_table(pid, status);
+                                                                                                                                                                                                                                    remove_process_table(pid);
+                                                                                                                                                                                                                                          count++;
+                                                                                                                                                                                                                                              }
+
+                                                                                                                                                                                                                                                return count;
+}
