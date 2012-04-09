@@ -68,9 +68,10 @@ void print_process_table(table_t *pt, const char * const caller)
     printf("       pid         state        status\n");
 
     if (iter == NULL)
-        printf("No processes running.\n");
+        printf("       No processes running.\n");
     else
     {
+        iter = iter->next;
         for (; iter != NULL; iter = iter->next)
         {
             printf("    %6d    %10s    0x%08x\n",
@@ -102,11 +103,13 @@ void deallocate_table(table_t *pt)
 
 int insert_process_table(table_t *pt, pid_t pid)
 {
+
     // First, if this will be the first process in process table pt,
     // allocate new space for the head and add it.
     if(pt->p_tab == NULL)
     {
         pt->p_tab = (child_t *)malloc( sizeof(child_t) );
+        pt->children++;
 
         if(!(pt->p_tab)) // Check for validity:
         {
@@ -118,26 +121,36 @@ int insert_process_table(table_t *pt, pid_t pid)
         else
             printf("not null!\n");
 
-        pt->p_tab->next = NULL;
-
+        pt->p_tab->next = (child_t *)malloc( sizeof(child_t) );
+        pt->p_tab->next->pid = pid;
+        pt->p_tab->next->state = STATE_RUNNING;
+        pt->p_tab->next->exit_status = 0;
     }
 
     // If data already exists in the process table (with head p_tab), go to
     // end of process table, then add our new data.
-    child_t *iter = pt->p_tab;
-    for(; iter != NULL; iter = iter->next);
-    
-    iter = iter->next;
-    iter = (child_t *)malloc( sizeof(child_t) );
-
-    if(!iter) // Check for validity:
+    else
     {
-        return -1;
-    }
+        child_t *iter = pt->p_tab;
+        int count = 0;
+        for(; iter->next != NULL; iter = iter->next)
+            count++;
+        printf("count: %d\n", count);
+        
+        //iter = iter->next;
+        iter->next = (child_t *)malloc( sizeof(child_t) );
 
-    iter->pid = pid;
-    iter->state = STATE_RUNNING;
-    iter->exit_status = 0;
+        if(!iter->next) // Check for validity:
+        {
+            return -1;
+        }
+        printf("not failed yet?\n");
+
+        iter->next->pid = pid;
+        iter->next->state = STATE_RUNNING;
+        iter->next->exit_status = 0;
+        iter->next->next = NULL;
+    }
 
     if (pr7_debug) print_process_table(pt, __func__);
 
