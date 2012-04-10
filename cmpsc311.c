@@ -1,4 +1,14 @@
-/* base library for CMPSC 311 projects
+/* CMPSC 311, Spring 2012, Project 7
+ *
+ * Authors:   Erich Stoekl and Andrew Moyer
+ * Email:     ems5311@psu.edu and abm5149@psu.edu
+ *
+ * cmpsc311.c
+ * 
+ * Utility program for various purposes in project.
+ * Slightly modified from Professor Heller's version
+ * to include variables specific to this project.
+ *
  */
 
 #include <stdio.h>

@@ -1,4 +1,12 @@
-/* base library for CMPSC 311 projects
+/* CMPSC 311, Spring 2012, Project 7
+ *
+ * Authors:   Erich Stoekl and Andrew Moyer
+ * Email:     ems5311@psu.edu and abm5149@psu.edu
+ *
+ * cmpsc311.h
+ * 
+ * Function declarations for cmpsc311.c utility functions.
+ *
  */
 
 #ifndef CMPSC311_H

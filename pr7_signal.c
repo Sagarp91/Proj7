@@ -1,6 +1,12 @@
-/*
- * pr7_table.c - process table implementation
- * Erich Stoekl, CMPSC 311, SP 12
+/* CMPSC 311, Spring 2012, Project 7
+ *
+ * Authors:   Erich Stoekl and Andrew Moyer
+ * Email:     ems5311@psu.edu and abm5149@psu.edu
+ *
+ * pr7_signal.c
+ * 
+ * Function implementations of signal.h functions
+ * Recycled with slight changes from project 6
  *
  */
 
@@ -60,6 +66,8 @@ int install_signal_handler(int sig, sighandler_t func)
   return (error ? -1 : 0);
 }
 
+// Function to toggling blocking of a signal on or off.
+// Useful for blocking SIGINT signal for background processes
 int block_signal(int sig, _Bool block)
 {
     // Block signal with sigprocmask:
@@ -75,18 +83,3 @@ int block_signal(int sig, _Bool block)
 
     return ret;
 }
-
-#ifdef UNDEF
-void reinstall_signal_handler(int sig, sighandler_t func)
-{
-#ifdef PR7_USE_SIGACTION
-  /* the signal handler remains installed after a signal is received */
-  return;
-#else
-  /* the default signal handler was reinstalled after a signal is received */
-  signal(sig, func);
-#endif
-}
-#endif
-/*----------------------------------------------------------------------------*/
-

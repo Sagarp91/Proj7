@@ -1,11 +1,15 @@
 #ifndef PR6_SIGNAL_H
 #define PR6_SIGNAL_H
 
-/* CMPSC 311 Project 6 toolkit 
+/* CMPSC 311, Spring 2012, Project 7
  *
- * This file is provided as part of the project description and starter kit.
- * If you modify it, then put your name, email address, and the date, in this
- * comment, and include this file in the materials you turn in.
+ * Authors:   Erich Stoekl and Andrew Moyer
+ * Email:     ems5311@psu.edu and abm5149@psu.edu
+ *
+ * pr7_signal.h
+ * 
+ * Declarations of functions to set up signal handling
+ * 
  */
 
 /*----------------------------------------------------------------------------*/
@@ -18,9 +22,8 @@ typedef void sighandler_t(int);
 int install_signal_handler(int sig, sighandler_t func);
     /* returns 0 if successful, -1 if not */
 
+// Function for switching blocking of a signal on or off
 int block_signal(int sig, _Bool block);
-
-void reinstall_signal_handler(int sig, sighandler_t func);
 
 /*----------------------------------------------------------------------------*/
 

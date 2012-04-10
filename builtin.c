@@ -1,6 +1,14 @@
-/*
- * builtin.c - Builtin functions implementation file
- * Erich Stoekl, CMPSC 311, SP12
+/* CMPSC 311, Spring 2012, Project 7
+ *
+ * Authors:   Erich Stoekl and Andrew Moyer
+ * Email:     ems5311@psu.edu and abm5149@psu.edu
+ *
+ * builtin.c
+ * 
+ * Implementation of built-in commands for the shell.
+ *
+ * These commands are run like any other program from the
+ * command line of the shell.
  *
  */
 
@@ -23,9 +31,10 @@
 
 extern char **environ;
 
+// Function that houses all builtin function for pr7
 int builtin(char *_argv[], table_t *pt)
 {
-                                 /* exit command */
+    /* exit command */
     if (strcmp(_argv[0], "exit") == 0)
     {
         int children = number_of_children(pt);
@@ -41,16 +50,25 @@ int builtin(char *_argv[], table_t *pt)
         }
     }
 
-                                 /* ignore singleton & */
+    /* ignore singleton & */
     if (strcmp(_argv[0], "&") == 0)
         { return 1; }
 
+    // Echo command
     if(strcmp(_argv[0], "echo") == 0)
     {
         Echo(_argv + 1);
         return 1;
     }
 
+    // Limits feature:
+    if(strcmp(_argv[0], "limits") == 0)
+    {
+        printf("Max line size: %d characters\n", MAXLINE);
+        return 1;
+    }
+
+    // dir (cd) command
     if(strcmp(_argv[0], "dir") == 0)
     {
         char *pwd_buf = (char *)malloc( (size_t)MAXLINE );
@@ -66,6 +84,7 @@ int builtin(char *_argv[], table_t *pt)
         return 1;
     }
 
+    // cdir (cd) command
     if(strcmp(_argv[0], "cdir") == 0)
     {
         if(f_p != stdin)
@@ -81,6 +100,7 @@ int builtin(char *_argv[], table_t *pt)
                 if((home_path = getenv("HOME")) == NULL)
                     fprintf(stderr, "%s: No environ name HOME.\n", prog);
 
+                // Verify the home path received:
                 if(chdir(home_path) == -1)
                 {
                     fprintf(stderr, "%s: chdir error: %s.\n", prog, strerror(errno));
@@ -90,15 +110,12 @@ int builtin(char *_argv[], table_t *pt)
                     // We can safely change the environment variable PWD:
                     setenv("PWD", home_path, 1);
                 }
-
             }
 
             else
             {
                 // Translate path given into realpath:
-                // Maybe ask heller about whether to put resolved_path on stack or heap
                 char *path = Strdup(_argv[1]);
-                // = (char *)malloc( (size_t)PATH_MAX );
                 char resolved_path[PATH_MAX];
                 realpath(path, resolved_path);
 
@@ -118,6 +135,7 @@ int builtin(char *_argv[], table_t *pt)
         return 1;
     }
 
+    // penv (printenv) command
     if(strcmp(_argv[0], "penv") == 0)
     {
         char *env;
@@ -139,6 +157,7 @@ int builtin(char *_argv[], table_t *pt)
         return 1;
     }
 
+    // senv (setenv) command
     if(strcmp(_argv[0], "senv") == 0)
     {
         if(_argv[1] != NULL && _argv[2] != NULL)
@@ -152,6 +171,7 @@ int builtin(char *_argv[], table_t *pt)
         return 1;
     }
 
+    // unsenv (unsetenv) command
     if(strcmp(_argv[0], "unsenv") == 0)
     {
         if(_argv[1] != NULL)
@@ -165,12 +185,14 @@ int builtin(char *_argv[], table_t *pt)
         return 1;
     }
 
+    // pjobs (jobs) command
     if(strcmp(_argv[0], "pjobs") == 0)
     {
         print_process_table(pt, __func__);
         return 1;
     }
 
+    // help command
     if(strcmp(_argv[0], "help") == 0)
     {
         printf("\tSpecial commands:\n");
@@ -188,10 +210,10 @@ int builtin(char *_argv[], table_t *pt)
     return 0;                    /* not a builtin command */
 }
 
+// Echo function simply prints its arguments
 int Echo(char *_argv[])
 {
     int i;
-    // Make sure this will never segfault
     for(i = 0; _argv[i] != NULL; i++)
     {
         if(_argv[i] == NULL)

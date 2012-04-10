@@ -1,4 +1,8 @@
 # CMPSC 311 Project 7, makefile for use with GCC
+# Erich Stoekl and Andrew Moyer
+# ems5311@psu.edu and abm5149@psu.edu
+#
+#
 
 SRC = pr7.4.c
 LIB = cmpsc311.c pr7_signal.c builtin.c pr7_table.c

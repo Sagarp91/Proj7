@@ -1,12 +1,20 @@
 /*----------------------------------------------------------------------------*/
 
-/* This is a rather primitive implementation.  It should be improved
- * by changing from a fixed-size array to a dynamically-allocated
- * linked list.
+/* CMPSC 311, Spring 2012, Project 7
  *
- * The only trick here is the C99 pre-defined identifier __func__ which
- * evaluates to a character string giving the name of the function
- * in which it appears.  (See C:ARM Sec. 2.6.1)
+ * Authors:   Erich Stoekl and Andrew Moyer
+ * Email:     ems5311@psu.edu and abm5149@psu.edu
+ *
+ * pr7_table.c
+ * 
+ * Implementations of functions declared in pr7_table.c
+ * Adapted from pr6_table functions from project 6, but
+ * rebuilt to use a linked list for dynamic allocation of
+ * new table entries.
+ *
+ * Can insert an indefinite amount of process entries into table
+ * (restriction would be the amount of memory program is allowed to use)
+ *
  */
 
 #include <stdio.h>
@@ -20,12 +28,6 @@
 
 /* fixed-size process table, give the size as a symbolic constant */
 #define MAX_CHILDREN 8
-
-/* an entry in the process table */
-/* The process table, maintained by the parent process only.
- * The table is static, to restrict access to the implementation.
- */
-//static pr7_process_info process_table[MAX_CHILDREN];
 
 /*
  * just for reference:
@@ -82,6 +84,7 @@ void print_process_table(table_t *pt, const char * const caller)
     }
 }
 
+// Allocate a new process table
 table_t *allocate_table(void)
 {
     table_t *pt = (table_t *)malloc( sizeof(table_t) );
@@ -103,6 +106,7 @@ void deallocate_table(table_t *pt)
     free(pt);
 }
 
+// Insert a new node into the process table.
 int insert_process_table(table_t *pt, pid_t pid)
 {
 
