@@ -176,8 +176,8 @@ int main(int argc, char *argv[])
         if (feof(stdin))                          /* end of file */
             { break; }
 
-            if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
-                fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
+        if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
+            fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
     }
 
     fclose(f_p);
@@ -215,8 +215,8 @@ int main(int argc, char *argv[])
         if (feof(stdin))                          /* end of file */
             { break; }
 
-            if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
-                fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
+        if((ret = eval_line(cmdline, e_flag)) == EXIT_FAILURE)
+            fprintf(stderr, "%s: failure in eval_line, on line %s. %s\n", prog, cmdline, strerror(errno));
 
         if(f_p == stdin && i_flag > 0)
             printf("%s%% ", prompt);
@@ -250,16 +250,16 @@ int eval_line(char *cmdline, int e_flag)
     if(e_flag > 0)
         Echo(_argv);
 
-    if (_argv[0] == NULL)                         /* ignore empty lines */
+    if (_argv[0] == NULL)  /* ignore empty lines */
         { return ret; }
 
-        if (builtin(_argv, process_table) == 1)                  /* the work is done */
-            { return ret; }
+    if (builtin(_argv, process_table) == 1) /* the work is done */
+        { return ret; }
 
-            if(background)
-            {
-                block_signal(SIGINT, 1);
-            }
+    if(background)
+    {
+        block_signal(SIGINT, 1);
+    }
 
     /* child runs user job */
     if ((pid = fork()) == 0)
