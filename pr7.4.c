@@ -10,6 +10,8 @@
  * -- numerous built-in functions, run "help" in shell for info
  * -- dynamic process table, keeps track of indefinite number of forked processes
  *
+ * IMPORTANT: Runs perfectly in Linux, not-so-perfectly in solaris.
+ *
  */
 
 /*----------------------------------------------------------------------------*/
@@ -44,9 +46,10 @@ static void usage(int status)
 {
     if (status == EXIT_SUCCESS)
     {
-        printf("Usage:  pr7 [-h] [-v] [-i] [-e] [-s f] [file]\n");
+        printf("Usage:  pr7 [-h] [-v] [-d] [-i] [-e] [-s f] [file]\n");
         printf("-h     help\n");
         printf("-v     verbose mode\n");
+        printf("-d     developer debug mode\n");
         printf("-i     interactive mode\n");
         printf("-e     echo commands before execution\n");
         printf("-s f   use startup file f, default pr7.init\n");

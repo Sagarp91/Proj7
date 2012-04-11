@@ -1,0 +1,50 @@
+Erich Stoekl and Andrew Moyer
+Project 7 README
+
+---- HOW TO RUN ----
+On Linux:
+run 'make' to generate 'pr7', the executable file
+'./pr7 -h' for command line option help
+
+
+NOTE: This program is only guarenteed to work on Linux.
+
+      Some problems do exist running on Solaris through SSH!
+      A makefile option for compiling in Solaris is there, however
+      I don't reccomend you use it.
+
+      Problems also exist when ran on my Mac OS X environment.
+
+
+Writing this command shell program went fairly smoothely from start
+to finish. I feel that the starter pack (called pr7.2.c on the site)
+gave a very good start and did much of the hard work for us already.
+In particular, this implemented much of the command line input
+parsing we needed and had rudimentary (incomplete) code for background
+process identification as well. With only a few changed to this, we soon
+had background process execution working in our project. Signal handlers
+were easily ported from the Project 6, and I figured out how to block
+signals for background processes fairly quickly by reading the GNU docs.
+For testing background process functionality, I found writing a shell
+script that calls sleep for 5 seconds, then prints a message when done
+sleeping was essential.
+
+Writing the process table was a fun exercise in implementing a linked
+list that performs a useful task. I had built linked lists in the past,
+first to just learn about them and how to make one in C, then later
+to solve some specific algorithms problems, so throwing together a
+linked list was simple for me in this project. I thought it was a lot of
+fun seeing how this list was used by the process table to add processes
+as nodes in the list, and pop them from the table as a node is popped
+from the list. Given how implementing data structures like the list
+in C is a little awkward, one can see why object-oriented languages
+got popular not too long after C became popular.
+
+The bonus parts that I added were support for '#' comments and
+a 'limits' built in command that prints the limits of the length of the
+command line in bytes. There is no definite limit for the number of processes
+one can have running at a single time, so I didn't feel like it would be
+a good idea to display a message about a max number of background processes.
+I would have liked to do other bonus projects, particularly command line recall
+with the arrow keys, but due to other projects and classes I didn't have enough
+time. I do kind of want to do it in my free time, however.
